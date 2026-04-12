@@ -1,11 +1,7 @@
 from http import HTTPStatus
 
-from fastapi.testclient import TestClient
 
-from fastapi_zero.app import app, appweb
-
-
-def test_root_deve_retornar_ola_mundo():
+def test_root_deve_retornar_ola_mundo(client):
     """
     Esse teste tem 3 etapas (AAA)
     - A: Arrange - Arranjo
@@ -13,31 +9,44 @@ def test_root_deve_retornar_ola_mundo():
     - A: Assert - Garanta que A eh A
     """
 
-    client = TestClient(app)  # Arrange
-
     response = client.get('/')  # Act
 
     assert response.json() == {'message': 'Ola Mundo!'}  # Assert
     assert response.status_code == HTTPStatus.OK
 
 
-def test_rootweb_deve_retornar_ola_mundo():
+def test_create_user(client):
 
-    client = TestClient(appweb)
-
-    response = client.get('/')
-
-    assert (
-        response.text
-        == """
-    <html>
-      <head>
-        <title> Nosso olá mundo!</title>
-      </head>
-      <body>
-        <h1> Olá Mundo </h1>
-      </body>
-    </html>
-    """
+    response = client.post(
+        '/users/',
+        json={
+            'username': 'cecilia',
+            'email': 'cecilia@example.com',
+            'password': 'secret',
+        },
     )
+
+    # Voltou o status code correto ?
+    assert response.status_code == HTTPStatus.CREATED
+
+    # Validar UserPublic
+    assert response.json() == {
+        'id': 1,
+        'username': 'cecilia',
+        'email': 'cecilia@example.com',
+    }
+
+
+def test_read_users(client):
+
+    response = client.get('/users/')
+
     assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'users':
+        [{
+        'id': 1,
+        'username': 'cecilia',
+        'email': 'cecilia@example.com',
+      }
+    ]
+  }
