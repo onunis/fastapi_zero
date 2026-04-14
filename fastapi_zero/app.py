@@ -61,3 +61,23 @@ def delete_user(user_id: int):
         )
 
     return database.pop(user_id - 1)
+
+
+@app.get(
+    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
+)
+def get_user_id(user_id: int):
+    if user_id < 1 or user_id > len(database):
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Deu ruim paizao! Nao achei...',
+        )
+
+    user_in_db = database[user_id - 1]
+
+    # Poderia ter usado
+    #  for user in database:
+    #     if user.id == user_id:
+    #         return user
+
+    return user_in_db
