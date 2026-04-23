@@ -58,24 +58,24 @@ def test_read_users_with_users(client, user):
 
 def test_update_user(client, user):
     response = client.put(
-        '/users/1',
+        f'/users/{user.id}',
         json={
-            'username': 'catarina',
-            'email': 'catarina@example.com',
-            'password': 'segredin123',
+            'username': 'Teste',
+            'email': 'test@test.com',
+            'password': 'testtest',
         },
     )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'id': 1,
-        'username': 'catarina',
-        'email': 'catarina@example.com',
+        'id': user.id,
+        'username': 'Teste',
+        'email': 'test@test.com',
     }
 
 
 def test_delete_user(client, user):
-    response = client.delete('/users/1')
+    response = client.delete(f'/users/{user.id}')
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User deleted'}
@@ -104,3 +104,53 @@ def test_update_integrity_error(client, user):
 
     assert response.status_code == HTTPStatus.CONFLICT
     assert response.json() == {'detail': 'Username or Email already exists'}
+
+
+def test_create_username_integrity_error(client, user):
+
+    response = client.post(
+        '/users',
+        json={
+            'username': 'Teste',
+            'email': 'cecilia@example.com',
+            'password': 'testeteste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Username already exists'}
+
+
+def test_create_email_integrity_error(client, user):
+
+    response = client.post(
+        '/users',
+        json={
+            'username': 'cecilia',
+            'email': 'teste@test.com',
+            'password': 'testeteste',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Email already exists'}
+
+
+def test_get_user_id(client, user):
+
+    response = client.get(f'/users/{user.id}')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'id': user.id,
+        'username': 'Teste',
+        'email': 'teste@test.com',
+    }
+
+
+def test_get_user_id_integrity_error(client, user):
+
+    response = client.get('/users/0')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
