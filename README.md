@@ -1,2 +1,2 @@
-## Projeot de Uma To-Do List FastAPI 
+## Projeot CRUD em FastAPI
 # Com Dunossauro
