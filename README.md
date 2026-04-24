@@ -1,2 +1,2 @@
-## Projeot de Uma To-Do List FastAPI 
-# Com Dunossauro
+## Projeto CRUD utilizando FastAPI 
+# Com auxilio das video aulas do Dunossauro
